@@ -1,0 +1,8 @@
+numpy
+pandas
+pytables
+tensorflow<2.0
+scipy
+scikit-learn
+pyBumpHunter
+matplotlib
