@@ -11,10 +11,10 @@ from scipy import optimize as opt
 import pyBumpHunter as BH
 
 # Path to dataset
-data_path = "/home/vaslin/Desktop/PhD/Data_LHCOlympics/"
+data_path = "data/"
 
 # Name of the GAN-AE model to use
-model_name = "RnD_multi"
+model_name = "RnD_single"
 
 # Load the trained GAN-AE model
 print('Loading model')
@@ -226,7 +226,3 @@ plt.legend(fontsize='large')
 plt.xlabel('Euclidean distance distribution',size='large')
 plt.savefig('apply_results/{}/distance_all.pdf'.format(model_name),bbox_inches='tight')
 plt.close(F)
-
-
-
-

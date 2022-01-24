@@ -56,6 +56,7 @@ print('   sig2.shape={}'.format(sig2.shape))
 print('')
 
 
+
 # Declare the GAN_AE instance
 print('Preparing GAN-AE')
 GAE = GAN_AE.GAN_AE(input_dim=var_names.size,
@@ -115,6 +116,11 @@ GAE.apply(test_data,dmin,dmax,var_name=var_names,label=label,filename='train_res
 sig1_dist = GAE.distance[1]
 sig1_auc=GAE.auc
 
+print('==========================================')
+print('==========================================')
+print('   SIG_DIST TYPE={}'.format(type(sig1_dist)))
+print('==========================================')
+print('==========================================')
 
 # Apply the trained GAN-AE to a background/signal2 mixture
 # Take 100k backgroud events and all signal2 events
