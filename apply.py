@@ -78,7 +78,7 @@ for bb in range(1,4):
     except:
         pass
     if(mode=='single'):
-        GAE.apply(Sbkg,bkg_min,bkg_max,var_name=var_names,filename='apply_results/temp/RnD',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
+        GAE.apply(Sbkg,bkg_min,bkg_max,distance_name='RnD',var_name=var_names,filename='apply_results/temp/RnD',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
         dist_bkg = GAE.distance
     else:
         GAE.multi_apply(Sbkg,bkg_min,bkg_max,var_name=var_names,filename='apply_results/temp/RnD',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
@@ -87,7 +87,7 @@ for bb in range(1,4):
     # Apply the loaded model to BBi dataset and get the distance
     Sbbi,bbi_min,bbi_max = GAE.scale_data(bbi)
     if(mode=='single'):
-        GAE.apply(Sbbi,bbi_min,bbi_max,var_name=var_names,filename='apply_results/temp/BB{}'.format(bb),do_latent=False,do_reco=False,do_roc=False,do_auc=False)
+        GAE.apply(Sbbi,bbi_min,bbi_max,distance_name='BB{}'.format(bb),var_name=var_names,filename='apply_results/temp/BB{}'.format(bb),do_latent=False,do_reco=False,do_roc=False,do_auc=False)
         dist_bbi = GAE.distance
     else:
         GAE.multi_apply(Sbbi,bbi_min,bbi_max,var_name=var_names,filename='apply_results/temp/BB{}'.format(bb),do_latent=False,do_reco=False,do_roc=False,do_auc=False)
