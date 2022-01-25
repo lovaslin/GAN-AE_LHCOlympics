@@ -28,7 +28,7 @@ except:
     pass
 
 # Mode (single/multi, same threshold or not)
-mode = 'multi'
+mode = 'single'
 same = False
 
 dist_all = []
