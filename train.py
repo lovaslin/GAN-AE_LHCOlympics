@@ -1,3 +1,4 @@
+import h5py
 # Code to train a GAN_AE instance on a dataset
 
 import GAN_AE
@@ -142,6 +143,11 @@ bkg_dist = GAE.distance[0]
 sig2_dist = GAE.distance[1]
 sig2_auc=GAE.auc
 
+# Saving the distance 
+with h5py.File('../RnD_distances.h5', "w") as fh5:         
+        dset = fh5.create_dataset("bkg", data=bkg_dist)
+        dset = fh5.create_dataset("sig1", data=sig1_dist)
+        dset = fh5.create_dataset("sig2", data=sig2_dist)
 
 # Plot all distance one single plot
 F = plt.figure(figsize=(12,8))
