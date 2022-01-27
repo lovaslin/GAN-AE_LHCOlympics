@@ -111,17 +111,11 @@ test_data[:100000] = Sbkg[200000:300000]
 test_data[100000:] = Ssig1
 label = np.append(np.zeros(100000,dtype=int),np.ones(Ssig1.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
-GAE.apply(test_data,dmin,dmax,var_name=var_names,label=label,filename='train_results/{}/sig1/{}'.format(model_name,model_name))
+GAE.apply(test_data,dmin,dmax,distance_name='sig1',var_name=var_names,label=label,filename='train_results/{}/sig1/{}'.format(model_name,model_name))
 
 # Save the distance distribution and auc separately
 sig1_dist = GAE.distance[1]
 sig1_auc=GAE.auc
-
-print('==========================================')
-print('==========================================')
-print('   SIG_DIST TYPE={}'.format(type(sig1_dist)))
-print('==========================================')
-print('==========================================')
 
 # Apply the trained GAN-AE to a background/signal2 mixture
 # Take 100k backgroud events and all signal2 events
@@ -136,14 +130,14 @@ test_data[:100000] = Sbkg[200000:300000]
 test_data[100000:] = Ssig2
 label = np.append(np.zeros(100000,dtype=int),np.ones(Ssig2.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
-GAE.apply(test_data,dmin,dmax,var_name=var_names,label=label,filename='train_results/{}/sig2/{}'.format(model_name,model_name))
+GAE.apply(test_data,dmin,dmax, distance_name='sig2',var_name=var_names,label=label,filename='train_results/{}/sig2/{}'.format(model_name,model_name))
 
 # Save the distance distribution and auc separately
 bkg_dist = GAE.distance[0]
 sig2_dist = GAE.distance[1]
 sig2_auc=GAE.auc
 
-# Saving the distance 
+# Saving the distance on an h5 file
 with h5py.File('../RnD_distances.h5', "w") as fh5:         
         dset = fh5.create_dataset("bkg", data=bkg_dist)
         dset = fh5.create_dataset("sig1", data=sig1_dist)
