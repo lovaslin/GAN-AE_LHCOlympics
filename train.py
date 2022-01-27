@@ -107,11 +107,11 @@ except:
 print('Applying GAN-AE')
 test_data = np.empty((100000+Ssig1.shape[0],Sbkg.shape[1]))
 print('   test_data.shape={}'.format(test_data.shape))
-test_data[:100000] = Sbkg[200000:300000]
+test_data[:500000] = Sbkg[200000:700000]
 test_data[100000:] = Ssig1
 label = np.append(np.zeros(100000,dtype=int),np.ones(Ssig1.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
-GAE.apply(test_data,dmin,dmax,distance_name='sig1',var_name=var_names,label=label,filename='train_results/{}/sig1/{}'.format(model_name,model_name))
+GAE.apply(test_data,dmin,var_name=var_names,label=label,filename='train_results/{}/sig1/{}'.format(model_name,model_name))
 
 # Save the distance distribution and auc separately
 sig1_dist = GAE.distance[1]
@@ -126,11 +126,11 @@ except:
 print('Applying GAN-AE')
 test_data = np.empty((100000+Ssig2.shape[0],Sbkg.shape[1]))
 print('   test_data.shape={}'.format(test_data.shape))
-test_data[:100000] = Sbkg[200000:300000]
+test_data[:500000] = Sbkg[200000:700000]
 test_data[100000:] = Ssig2
 label = np.append(np.zeros(100000,dtype=int),np.ones(Ssig2.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
-GAE.apply(test_data,dmin,dmax, distance_name='sig2',var_name=var_names,label=label,filename='train_results/{}/sig2/{}'.format(model_name,model_name))
+GAE.apply(test_data,dmin,dmax,var_name=var_names,label=label,filename='train_results/{}/sig2/{}'.format(model_name,model_name))
 
 # Save the distance distribution and auc separately
 bkg_dist = GAE.distance[0]
