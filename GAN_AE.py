@@ -549,7 +549,7 @@ class GAN_AE():
     
     # Apply a single GAN-AE model
     # If label is given, they can be used to evaluate the model
-    def apply(self,data,dmin,dmax, distance_name=None,var_name=None,label=None,filename=None,do_latent=True,do_reco=True,do_distance=True,do_roc=True,do_auc=True,ih=-1):
+    def apply(self,data,dmin,dmax, var_name=None,label=None,filename=None,do_latent=True,do_reco=True,do_distance=True,do_roc=True,do_auc=True,ih=-1):
         '''
         Apply one GAN-AE model to a dataset in order to produce result plots.
         
@@ -714,9 +714,6 @@ class GAN_AE():
             else:
                 dist_bkg = np.sqrt(np.sum(np.square(bkg - reco_bkg),axis=1))
                 dist_sig = np.sqrt(np.sum(np.square(sig - reco_sig),axis=1))
-                with h5py.File('../Distances_{}.h5'.format(distance_name), "w") as fh5:         
-                    dset = fh5.create_dataset("bkg", data=dist_bkg)
-                    dset = fh5.create_dataset("sig1", data=dist_sig)
             
             # Do the plot
             with lock:
