@@ -105,7 +105,7 @@ try:
 except:
     pass
 print('Applying GAN-AE')
-test_data = np.empty((100000+Ssig1.shape[0],Sbkg.shape[1]))
+test_data = np.empty((500000+Ssig1.shape[0],Sbkg.shape[1]))
 print('   test_data.shape={}'.format(test_data.shape))
 test_data[:500000] = Sbkg[200000:700000]
 test_data[100000:] = Ssig1
