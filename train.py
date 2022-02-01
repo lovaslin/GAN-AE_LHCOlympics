@@ -109,7 +109,7 @@ test_data = np.empty((500000+Ssig1.shape[0],Sbkg.shape[1]))
 print('   test_data.shape={}'.format(test_data.shape))
 test_data[:500000] = Sbkg[200000:700000]
 test_data[500000:] = Ssig1
-label = np.append(np.zeros(100000,dtype=int),np.ones(Ssig1.shape[0],dtype=int))
+label = np.append(np.zeros(500000,dtype=int),np.ones(Ssig1.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
 GAE.apply(test_data,dmin,dmax,var_name=var_names,label=label,filename='train_results/{}/sig1/{}'.format(model_name,model_name))
 
@@ -138,7 +138,7 @@ sig2_dist = GAE.distance[1]
 sig2_auc=GAE.auc
 
 # Saving the distance on an h5 file
-with h5py.File('../RnD_distances.h5', "w") as fh5:         
+with h5py.File('../RnD_distances_2.h5', "w") as fh5:         
         dset = fh5.create_dataset("bkg", data=bkg_dist)
         dset = fh5.create_dataset("sig1", data=sig1_dist)
         dset = fh5.create_dataset("sig2", data=sig2_dist)
