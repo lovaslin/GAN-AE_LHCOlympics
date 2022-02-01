@@ -124,11 +124,11 @@ try:
 except:
     pass
 print('Applying GAN-AE')
-test_data = np.empty((100000+Ssig2.shape[0],Sbkg.shape[1]))
+test_data = np.empty((500000+Ssig2.shape[0],Sbkg.shape[1]))
 print('   test_data.shape={}'.format(test_data.shape))
 test_data[:500000] = Sbkg[200000:700000]
-test_data[100000:] = Ssig2
-label = np.append(np.zeros(100000,dtype=int),np.ones(Ssig2.shape[0],dtype=int))
+test_data[500000:] = Ssig2
+label = np.append(np.zeros(500000,dtype=int),np.ones(Ssig2.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
 GAE.apply(test_data,dmin,dmax,var_name=var_names,label=label,filename='train_results/{}/sig2/{}'.format(model_name,model_name))
 
