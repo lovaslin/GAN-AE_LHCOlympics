@@ -23,7 +23,7 @@ GAE.load('models/{}/{}'.format(model_name,model_name))
 
 # Create folder for this model if needed if needed
 try:
-    os.mkdir('apply_results/{}'.format(model_name),0o755)
+    os.mkdir('applybyme_results/{}'.format(model_name),0o755)
 except:
     pass
 
@@ -62,13 +62,14 @@ mjj_sig = sig['mjj'].values
 bkg = bkg.drop(columns='mjj')
 bbi = bbi.drop(columns='mjj')
 sig = sig.drop(columns='mjj')
+bb1 = pd.concat([bbi, sig], axis=1)
 
 # Convert to numpy array and save columns names
 var_names = bkg.columns
 bkg = bkg.values
 bbi = bbi.values
 sig = sig.values
-bb1 = pd.concat([bbi, sig], axis=1)
+bb1 = bb1.values
 
 print('bkg shape = {}'.format(bkg.shape))
 print('   bbi.shape={}'.format(bbi.shape))
@@ -77,26 +78,26 @@ print('')
 
 # Create folders for this black-box if needed
 try:
-    os.mkdir('apply_results/{}/BB1byme'.format(model_name),0o755)
+    os.mkdir('applybyme_results/{}/BB1byme'.format(model_name),0o755)
 except:
     pass
 try:
-    os.mkdir('apply_results/{}/BB1byme/shaping_function'.format(model_name),0o755)
-    os.mkdir('apply_results/{}/BBbyme/BumpHunter'.format(model_name),0o755)
+    os.mkdir('applybyme_results/{}/BB1byme/shaping_function'.format(model_name),0o755)
+    os.mkdir('applybyme_results/{}/BBbyme/BumpHunter'.format(model_name),0o755)
 except:
     pass
 
 # Apply the loaded model to RnD dataset and get the distance
     Sbkg,bkg_min,bkg_max = GAE.scale_data(bkg)
     try:
-        os.mkdir('apply_results/temp',0o755)
+        os.mkdir('applybyme_results/temp',0o755)
     except:
         pass
     if(mode=='single'):
-        GAE.apply(Sbkg,bkg_min,bkg_max, var_name=var_names,filename='apply_results/temp/RnD',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
+        GAE.apply(Sbkg,bkg_min,bkg_max, var_name=var_names,filename='applybyme_results/temp/RnD',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
         dist_bkg = GAE.distance
     else:
-        GAE.multi_apply(Sbkg,bkg_min,bkg_max,var_name=var_names,filename='apply_results/temp/RnD',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
+        GAE.multi_apply(Sbkg,bkg_min,bkg_max,var_name=var_names,filename='applybyme_results/temp/RnD',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
         dist_bkg = GAE.distance[:,-1]
 
 # Apply the loaded model to BBi dataset and get the distance
@@ -114,10 +115,10 @@ label = np.append(np.zeros(Sbbi.shape[0],dtype=int),np.ones(Ssig.shape[0],dtype=
 print('   label.shape={}'.format(label.shape))
 
 if(mode=='single'):
-    GAE.apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='apply_results/temp/BB1byme',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
+    GAE.apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='applybyme_results/temp/BB1byme',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
     dist_bbi = GAE.distance
 else:
-    GAE.multi_apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='apply_results/temp/BB1byme',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
+    GAE.multi_apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='applybyme_results/temp/BB1byme',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
     dist_bbi = GAE.distance[:,-1]
 
 # Save the distance distribution and auc separately
@@ -130,6 +131,8 @@ with h5py.File('../BB1_distances.h5', "w") as fh5:
         dset = fh5.create_dataset("bkg", data=bb1_dist)
         dset = fh5.create_dataset("sig1", data=sig_dist)
 
+###############################################################################################################################################################
+bb=1
 # Append the full distance distribution for bbi to the global dist_all variable
 dist_all.append(dist_bbi)
 
@@ -162,7 +165,7 @@ plt.hist(bins[:-1],bins=bins,weights=shape_func,histtype='step',linewidth=2,labe
 plt.plot(x_fit,Fmodel(x_fit,p[0],p[1],p[2],p[3],p[4]),linewidth=2,label='fit {0:.4f} $x^4$ + {1:.4g} $x^3$ + {2:.4g} $x^2$ + {3:.4g} x + {4:.4g}'.format(p[0],p[1],p[2],p[3],p[4]))
 plt.legend(fontsize='large')
 plt.xlabel('shaping function',size='large')
-plt.savefig('apply_results/{}/BB{}/shaping_function/shaping_func.pdf'.format(model_name,bb),bbox_inches='tight')
+plt.savefig('applybyme_results/{}/BB{}/shaping_function/shaping_func.pdf'.format(model_name,bb),bbox_inches='tight')
 plt.close(F)
 
 # Define the cut threshold for the black-box
@@ -189,7 +192,7 @@ plt.hist(mjj_bbi,bins=bins,histtype='step',linewidth=2,color='b',linestyle='--',
 plt.legend(fontsize='large')
 plt.yscale('log')
 plt.xlabel('mjj',size='large')
-plt.savefig('apply_results/{}/BB{}/shaping_function/mjj.pdf'.format(model_name,bb),bbox_inches='tight')
+plt.savefig('applybyme_results/{}/BB{}/shaping_function/mjj.pdf'.format(model_name,bb),bbox_inches='tight')
 plt.close(F)
 
 # Plot the distance distributions
@@ -199,7 +202,7 @@ plt.hist(dist_bbi,bins=60,histtype='step',linewidth=2,label='bb{}'.format(bb))
 plt.legend(fontsize='large')
 plt.yscale('log')
 plt.xlabel('Euclidean distance')
-plt.savefig('apply_results/{}/BB{}/shaping_function/distance.pdf'.format(model_name,bb),bbox_inches='tight')
+plt.savefig('applybyme_results/{}/BB{}/shaping_function/distance.pdf'.format(model_name,bb),bbox_inches='tight')
 plt.close(F)
 
 # Apply the shaping function to BBi and compare to BBi after cut
@@ -215,7 +218,7 @@ hist_bbi_cut,_,_ = plt.hist(mjj_bbi[dist_bbi>th_bbi],bins=bins,histtype='step',l
 plt.legend(fontsize='large')
 plt.xlabel('mjj')
 plt.yscale('log')
-plt.savefig('apply_results/{}/BB{}/shaping_function/mjj_reshaped.pdf'.format(model_name,bb),bbox_inches='tight')
+plt.savefig('applybyme_results/{}/BB{}/shaping_function/mjj_reshaped.pdf'.format(model_name,bb),bbox_inches='tight')
 plt.close(F)
 print('th_bkg = {}'.format(th_bkg))
 print('th_bb  = {}'.format(th_bbi))
@@ -241,9 +244,9 @@ b.BumpScan(hist_bbi_cut,hist_bbi_reshaped,is_hist=True)
 b.PrintBumpInfo()
 b.PrintBumpTrue(hist_bbi_cut,hist_bbi_reshaped,is_hist=True)
 
-b.GetTomography(hist_bbi_cut,is_hist=True,filename='apply_results/{}/BB{}/BumpHunter/tomography.pdf'.format(model_name,bb))
-b.PlotBump(hist_bbi_cut,hist_bbi_reshaped,is_hist=True,filename='apply_results/{}/BB{}/BumpHunter/bump.pdf'.format(model_name,bb))
-b.PlotBHstat(show_Pval=True,filename='apply_results/{}/BB{}/BumpHunter/BH_statistics.pdf'.format(model_name,bb))
+b.GetTomography(hist_bbi_cut,is_hist=True,filename='applybyme_results/{}/BB{}/BumpHunter/tomography.pdf'.format(model_name,bb))
+b.PlotBump(hist_bbi_cut,hist_bbi_reshaped,is_hist=True,filename='applybyme_results/{}/BB{}/BumpHunter/bump.pdf'.format(model_name,bb))
+b.PlotBHstat(show_Pval=True,filename='applybyme_results/{}/BB{}/BumpHunter/BH_statistics.pdf'.format(model_name,bb))
 
 print('###########################')
 print('')
@@ -254,5 +257,5 @@ plt.title('Euclidean distance distributions (all black boxes)')
 plt.hist(dist_all[0],bins=60,histtype='step',linewidth=2,label='BB1')
 plt.legend(fontsize='large')
 plt.xlabel('Euclidean distance distribution',size='large')
-plt.savefig('apply_results/{}/distance_BB1byme.pdf'.format(model_name),bbox_inches='tight')
+plt.savefig('applybyme_results/{}/distance_BB1byme.pdf'.format(model_name),bbox_inches='tight')
 plt.close(F)
