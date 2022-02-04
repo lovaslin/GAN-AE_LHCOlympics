@@ -39,7 +39,6 @@ dist_all = []
 # Load the dataset
 print('Reading data')
 bkg = pd.read_hdf(data_path+'bkgHLF_merged_RnD.h5')
-bkg = bkg.iloc[:100000,:]
 bbi = pd.read_hdf(data_path+'bkgHLF_merged_BB1.h5') 
 sig = pd.read_hdf(data_path+'sigHLF_merged_BB1.h5')
 
@@ -111,13 +110,15 @@ print('   Sbbi.shape={}'.format(Sbbi.shape))
 print('   Ssig.shape={}'.format(Ssig.shape))
 bb1_data = np.empty((Sbbi.shape[0]+Ssig.shape[0],Sbbi.shape[1]))
 print('   bb1_data.shape={}'.format(bb1_data.shape))
+
+#BB1
 bb1_data[:Sbbi.shape[0]] = Sbbi
 bb1_data[Sbbi.shape[0]:] = Ssig
 label = np.append(np.zeros(Sbbi.shape[0],dtype=int),np.ones(Ssig.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
-GAE.apply(bb1_data,bb1_min,bb1_max,var_name=var_names, label=label,filename='applybyme_results/temp/BB1byme')
+GAE.apply(bb1_data,bb1_min,bb1_max,var_name=var_names, label=label,filename='applybyme_results/temp/BB1byme', do_latent=False, do_reco=False)
 dist_bbi = GAE.distance
-
+print('GAE distance type {}'.format(dist_bbi))
 # Save the distance distribution and auc separately
 bb1_dist = GAE.distance[0]
 sig_dist = GAE.distance[1]
