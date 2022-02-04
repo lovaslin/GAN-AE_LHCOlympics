@@ -127,7 +127,7 @@ sig_auc=GAE.auc
 with h5py.File('../BB1_distances.h5', "w") as fh5:         
         dset = fh5.create_dataset("bkg", data=bb1_dist)
         dset = fh5.create_dataset("sig", data=sig_dist)
-        dset = fh5.create_dataset("auc"=sig_auc)
+        dset = fh5.create_dataset("aucscore", data=sig_auc)
 
 '''
 ###############################################################################################################################################################
