@@ -9,6 +9,7 @@ import os
 import matplotlib.pyplot as plt
 from scipy import optimize as opt
 import pyBumpHunter as BH
+import h5py
 
 # Path to dataset
 data_path = "data/"
@@ -131,6 +132,7 @@ with h5py.File('../BB1_distances.h5', "w") as fh5:
         dset = fh5.create_dataset("bkg", data=bb1_dist)
         dset = fh5.create_dataset("sig1", data=sig_dist)
 
+'''
 ###############################################################################################################################################################
 bb=1
 # Append the full distance distribution for bbi to the global dist_all variable
@@ -259,3 +261,4 @@ plt.legend(fontsize='large')
 plt.xlabel('Euclidean distance distribution',size='large')
 plt.savefig('applybyme_results/{}/distance_BB1byme.pdf'.format(model_name),bbox_inches='tight')
 plt.close(F)
+'''
