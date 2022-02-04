@@ -116,10 +116,10 @@ label = np.append(np.zeros(Sbbi.shape[0],dtype=int),np.ones(Ssig.shape[0],dtype=
 print('   label.shape={}'.format(label.shape))
 
 if(mode=='single'):
-    GAE.apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='applybyme_results/temp/BB1byme',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
+    GAE.apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='applybyme_results/temp/BB1byme')
     dist_bbi = GAE.distance
 else:
-    GAE.multi_apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='applybyme_results/temp/BB1byme',do_latent=False,do_reco=False,do_roc=False,do_auc=False)
+    GAE.multi_apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='applybyme_results/temp/BB1byme')
     dist_bbi = GAE.distance[:,-1]
 
 # Save the distance distribution and auc separately
