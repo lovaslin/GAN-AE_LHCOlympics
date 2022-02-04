@@ -39,6 +39,7 @@ dist_all = []
 # Load the dataset
 print('Reading data')
 bkg = pd.read_hdf(data_path+'bkgHLF_merged_RnD.h5')
+bkg = bkg.iloc[:100000,:]
 bbi = pd.read_hdf(data_path+'bkgHLF_merged_BB1.h5') 
 sig = pd.read_hdf(data_path+'sigHLF_merged_BB1.h5')
 
@@ -114,13 +115,8 @@ bb1_data[:Sbbi.shape[0]] = Sbbi
 bb1_data[Sbbi.shape[0]:] = Ssig
 label = np.append(np.zeros(Sbbi.shape[0],dtype=int),np.ones(Ssig.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
-
-if(mode=='single'):
-    GAE.apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='applybyme_results/temp/BB1byme')
-    dist_bbi = GAE.distance
-else:
-    GAE.multi_apply(bb1_data,bb1_min,bb1_max,var_name=var_names,filename='applybyme_results/temp/BB1byme')
-    dist_bbi = GAE.distance[:,-1]
+GAE.apply(bb1_data,bb1_min,bb1_max,var_name=var_names, label=label,filename='applybyme_results/temp/BB1byme')
+dist_bbi = GAE.distance
 
 # Save the distance distribution and auc separately
 bb1_dist = GAE.distance[0]
@@ -130,7 +126,8 @@ sig_auc=GAE.auc
 # Saving the distance on an h5 file
 with h5py.File('../BB1_distances.h5', "w") as fh5:         
         dset = fh5.create_dataset("bkg", data=bb1_dist)
-        dset = fh5.create_dataset("sig1", data=sig_dist)
+        dset = fh5.create_dataset("sig", data=sig_dist)
+        dset = fh5.create_dataset("auc"=sig_auc)
 
 '''
 ###############################################################################################################################################################
