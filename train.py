@@ -23,37 +23,37 @@ except:
 
 # Load the dataset
 print('Reading data')
-bkg = pd.read_hdf(data_path+'RnD_bkg_HLF.h5') 
-sig1 = pd.read_hdf(data_path+'RnD_sig1_HLF.h5')
-sig2 = pd.read_hdf(data_path+'RnD_sig2_HLF.h5')
+bkg = pd.read_hdf(data_path+'bkgHLF_merged_RnD.h5') 
+sig1 = pd.read_hdf(data_path+'sigHLF_merged_RnD.h5')
+#sig2 = pd.read_hdf(data_path+'RnD_sig2_HLF.h5')
 
 # Select the zone to train on (cuts)
 bkg = bkg[bkg['mjj']>2700]
 bkg = bkg[bkg['mjj']<7000]
 sig1 = sig1[sig1['mjj']>2700]
 sig1 = sig1[sig1['mjj']<7000]
-sig2 = sig2[sig2['mjj']>2700]
-sig2 = sig2[sig2['mjj']<7000]
+#sig2 = sig2[sig2['mjj']>2700]
+#sig2 = sig2[sig2['mjj']<7000]
 
 # Remove mjj from data and keep it separately
 # It will be used to compute the DisCo term of the loss function
 mjj_bkg = bkg['mjj'].values
 mjj_sig1 = sig1['mjj'].values
-mjj_sig2 = sig2['mjj'].values
+#mjj_sig2 = sig2['mjj'].values
 
 bkg = bkg.drop(columns='mjj')
 sig1 = sig1.drop(columns='mjj')
-sig2 = sig2.drop(columns='mjj')
+#sig2 = sig2.drop(columns='mjj')
 
 # Convert to numpy array and save columns names
 var_names = bkg.columns
 bkg = bkg.values
 sig1 = sig1.values
-sig2 = sig2.values
+#sig2 = sig2.values
 
 print('   bkg.shape={}'.format(bkg.shape))
 print('   sig1.shape={}'.format(sig1.shape))
-print('   sig2.shape={}'.format(sig2.shape))
+#print('   sig2.shape={}'.format(sig2.shape))
 print('')
 
 
@@ -74,13 +74,13 @@ GAE = GAN_AE.GAN_AE(input_dim=var_names.size,
 # Prepare the data
 Sbkg,dmin,dmax = GAE.scale_data(bkg)
 Ssig1,_,_ = GAE.scale_data(sig1)
-Ssig2,_,_ = GAE.scale_data(sig2)
+#Ssig2,_,_ = GAE.scale_data(sig2)
 min_aux = mjj_bkg.min()
 max_aux = mjj_bkg.max()
 Saux = (mjj_bkg-min_aux)/(max_aux-min_aux)
 print('   Sbkg.shape={}'.format(Sbkg.shape))
 print('   Ssig1.shape={}'.format(Ssig1.shape))
-print('   Ssig2.shape={}'.format(Ssig2.shape))
+#print('   Ssig2.shape={}'.format(Ssig2.shape))
 print('   Saux.shape={}'.format(Saux.shape))
 
 
@@ -114,9 +114,11 @@ print('   label.shape={}'.format(label.shape))
 GAE.apply(test_data,dmin,dmax,var_name=var_names,label=label,filename='train_results/{}/sig1/{}'.format(model_name,model_name))
 
 # Save the distance distribution and auc separately
+bkg_dist = GAE.distance[0]
 sig1_dist = GAE.distance[1]
 sig1_auc=GAE.auc
 
+'''
 # Apply the trained GAN-AE to a background/signal2 mixture
 # Take 100k backgroud events and all signal2 events
 try:
@@ -132,23 +134,24 @@ label = np.append(np.zeros(500000,dtype=int),np.ones(Ssig2.shape[0],dtype=int))
 print('   label.shape={}'.format(label.shape))
 GAE.apply(test_data,dmin,dmax,var_name=var_names,label=label,filename='train_results/{}/sig2/{}'.format(model_name,model_name))
 
+
 # Save the distance distribution and auc separately
-bkg_dist = GAE.distance[0]
 sig2_dist = GAE.distance[1]
 sig2_auc=GAE.auc
+'''
 
 # Saving the distance on an h5 file
-with h5py.File('../RnD_distances_2.h5', "w") as fh5:         
+with h5py.File('../RnD_distances.h5', "w") as fh5:         
         dset = fh5.create_dataset("bkg", data=bkg_dist)
         dset = fh5.create_dataset("sig1", data=sig1_dist)
-        dset = fh5.create_dataset("sig2", data=sig2_dist)
+        #dset = fh5.create_dataset("sig2", data=sig2_dist)
 
 # Plot all distance one single plot
 F = plt.figure(figsize=(12,8))
 plt.title('Euclidean distance distribution (all)')
 plt.hist(bkg_dist,bins=60,histtype='step',linewidth=2,label='background')
 plt.hist(sig1_dist,bins=60,histtype='step',linewidth=2,label='signal 1')
-plt.hist(sig2_dist,bins=60,histtype='step',linewidth=2,label='signal 2')
+#plt.hist(sig2_dist,bins=60,histtype='step',linewidth=2,label='signal 2')
 plt.legend(fontsize='large')
 plt.xlabel('Euclidean distance',size='large')
 plt.savefig('train_results/{}/{}_distance_all.pdf'.format(model_name,model_name),bbox_inches='tight')
@@ -161,14 +164,14 @@ step = (roc_max-roc_min)/Nbin
 steps = np.arange(roc_min+step,roc_max+step,step)
 roc_x = []
 roc_x.append(np.array([sig1_dist[sig1_dist>th].size/sig1_dist.size for th in steps]))
-roc_x.append(np.array([sig2_dist[sig2_dist>th].size/sig2_dist.size for th in steps]))
+#roc_x.append(np.array([sig2_dist[sig2_dist>th].size/sig2_dist.size for th in steps]))
 roc_y = np.array([bkg_dist[bkg_dist<th].size/bkg_dist.size for th in steps])
 roc_r1 = np.linspace(0,1,100)
 roc_r2 = 1-roc_r1
 
 F = plt.figure(figsize=(12,8))
 plt.plot(roc_x[0],roc_y,'-',linewidth=2,label='signal 1 auc={0:.4f}'.format(sig1_auc))
-plt.plot(roc_x[1],roc_y,'-',linewidth=2,label='signal 2 auc={0:.4f}'.format(sig2_auc))
+#plt.plot(roc_x[1],roc_y,'-',linewidth=2,label='signal 2 auc={0:.4f}'.format(sig2_auc))
 plt.plot(roc_r1,roc_r2,'--',label='random class')
 plt.legend(fontsize='large')
 plt.xlabel('signal efficiency',size='large')
