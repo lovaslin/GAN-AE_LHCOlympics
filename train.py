@@ -158,8 +158,8 @@ plt.savefig('train_results/{}/{}_distance_all.pdf'.format(model_name,model_name)
 
 # Plot all ROC curve on one single plot
 Nbin = 100 # We use 100 points to make the ROC curve
-roc_min = min([bkg_dist.min(),sig1_dist.min(),sig2_dist.min()])
-roc_max = max([bkg_dist.max(),sig1_dist.max(),sig2_dist.max()])
+roc_min = min([bkg_dist.min(),sig1_dist.min()])
+roc_max = max([bkg_dist.max(),sig1_dist.max()])
 step = (roc_max-roc_min)/Nbin
 steps = np.arange(roc_min+step,roc_max+step,step)
 roc_x = []
