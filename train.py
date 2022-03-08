@@ -141,7 +141,7 @@ sig2_auc=GAE.auc
 '''
 
 # Saving the distance on an h5 file
-with h5py.File('../RnD_distances.h5', "w") as fh5:         
+with h5py.File('RnD_distances.h5', "w") as fh5:         
         dset = fh5.create_dataset("bkg", data=bkg_dist)
         dset = fh5.create_dataset("sig1", data=sig1_dist)
         #dset = fh5.create_dataset("sig2", data=sig2_dist)
